@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-deployment
+  namespace: udacity
+  labels:
+    app: server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: server-pod
+  template:
+    metadata:
+      labels:
+        app: server-pod
+    spec:
+      containers:
+        - image: DOCKER_REPOSITORY_ORG/DOCKER_IMAGE_NAME:VERSION_TAG
+          name: server-pod
+          ports:
+            - containerPort: 5153
+          args:
+            - python
+            - app.py
+          livenessProbe:
+            httpGet:
+              path: /health_check
+              port: 5153
+            initialDelaySeconds: 5
+            timeoutSeconds: 2
+            periodSeconds: 10
