@@ -1,6 +1,6 @@
 # udacity-microservice-helm-chart
 
-This project is done to better understand how kubernetes application manager `helm chart` works, and learn how to use it for my kubernetes cluster. Rather than a herculian-effort-required manual installation of prometheus and grafana, help by helm would be invaluable.
+This project is done to better understand how kubernetes application manager `helm chart` works, and learn how to use it for [udacity-cloud-devops-project-5](https://github.com/hyungmogu/udacity-cloud-devops-project-5) github repository . There are a lot of parts like provisioning redis or postgresql where I feel more learning is required. I have implemented my solutions but I have questions if there are easier, or simpler approach. I hope that by the end of this project, I learn how to use helm and related tools that the work of provisioning my kubernetes cluster becomes easier.
 
 ## Description
 
