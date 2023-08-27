@@ -49,4 +49,4 @@ spec:
                 name: db-secret
                 key: DB_PASSWORD
           - name: DB_HOST
-            value: server-db
+            value: postgres-service
