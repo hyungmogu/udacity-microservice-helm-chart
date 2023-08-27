@@ -18,6 +18,7 @@ spec:
       containers:
         - image: DOCKER_REPOSITORY_ORG/DOCKER_IMAGE_NAME:VERSION_TAG
           name: server-pod
+          imagePullPolicy: Always
           ports:
             - containerPort: 5153
           args:
