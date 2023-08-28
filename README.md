@@ -16,6 +16,7 @@ For this project, you are a DevOps engineer who will be collaborating with a tea
 2. Docker CLI - build and run Docker images locally
 3. `kubectl` - run commands against a Kubernetes cluster
 4. `helm` - apply Helm Charts to a Kubernetes cluster
+5. `AWS CLI` - For uploading image to Amazon ECR and provisoning Amazon Kubernetes Cluster using EKSCTL
 
 #### Remote Resources
 1. AWS CodeBuild - build Docker images remotely
@@ -25,7 +26,46 @@ For this project, you are a DevOps engineer who will be collaborating with a tea
 5. GitHub - pull and clone code
 
 ### Setup
-#### 1. Configure a Database
+#### 1. Provisioning EKS Cluster
+
+1. Setup AWS Credentials
+
+```
+aws configure
+```
+
+2. Check if you are connected
+
+```
+aws sts get-caller-identity
+```
+
+If correct, it should give output in the following:
+
+```
+{
+    "Account": "123456789012",
+    "UserId": "AR#####:#####",
+    "Arn": "arn:aws:sts::123456789012:assumed-role/role-name/role-session-name"
+}
+```
+
+3. Make sure IAM Node Group role is generated via instructions [here](https://docs.aws.amazon.com/eks/latest/userguide/create-node-role.html#create-worker-node-role)
+
+4. Provision Kubernetes Cluster using EKSCTL
+
+```
+eksctl create cluster \
+            --name udacity-kubernetes-cluster-demo-arm \
+            --region us-east-1 \
+            --nodegroup-name <NODE_GROUP_ROLE_NAME> \
+            --node-type t4g.micro \
+            --nodes 2 \
+            --nodes-min 1 \
+            --nodes-max 2
+```
+
+#### 2. Configure a Database
 Set up a Postgres database using a Helm Chart.
 
 1. Set up Bitnami Repo
@@ -72,7 +112,7 @@ kubectl port-forward --namespace default svc/<SERVICE_NAME>-postgresql 5432:5432
     PGPASSWORD="$POSTGRES_PASSWORD" psql --host 127.0.0.1 -U postgres -d postgres -p 5432 < <FILE_NAME.sql>
 ```
 
-### 2. Running the Analytics Application Locally
+### 3. Running the Analytics Application Locally
 In the `analytics/` directory:
 
 1. Install dependencies
@@ -129,3 +169,6 @@ The benefit here is that it's explicitly set. However, note that the `DB_PASSWOR
 2. Cloud Quick Labs. Kubernetes Application Deployment from AWS ECR to EKS. Youtube. https://www.youtube.com/watch?v=Y4kNINPe9ho
 3. Vladislav. Docker ARG, ENV and .env - a Complete Guide. vsupalov. https://vsupalov.com/docker-arg-env-variable-guide/
 4. joar. How to install psycopg2 with "pip" on Python?. Stack Overflow. https://stackoverflow.com/questions/5420789/how-to-install-psycopg2-with-pip-on-python#answer-5450183
+5. terpez. Daemon error responses: exec format error and Container is restarting, wait until the container is running. Docker Community Forum. https://forums.docker.com/t/daemon-error-responses-exec-format-error-and-container-is-restarting-wait-until-the-container-is-running/110385/2
+6. Justin Lee. Demo: Creating an EKS Cluster. Udacity. https://learn.udacity.com/paid-courses/cd12355/lessons/8baf6c23-4fd5-481e-97ef-258d8f1f4556/concepts/64e226da-b22e-4be1-bb10-1bf614e0ef48
+7. EKSCTL Team. ARM Support. EKSCTL. https://eksctl.io/usage/arm-support/
