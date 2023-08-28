@@ -121,3 +121,8 @@ The benefit here is that it's explicitly set. However, note that the `DB_PASSWOR
 6. Check AWS CloudWatch for application logs.
     - a. Take a screenshot of AWS CloudWatch logs for the application.
 7. Create a README.md file in your solution that serves as documentation for your user to detail how your deployment process works and how the user can deploy changes. The details should not simply rehash what you have done on a step by step basis. Instead, it should help an experienced software developer understand the technologies and tools in the build and deploy process as well as provide them insight into how they would release new builds.
+
+
+## References
+
+1. Emre Yilmaz. 3 Ways for Environment Variables in AWS CodeBuild Buildspecs. Shikisoft. https://blog.shikisoft.com/define-environment-vars-aws-codebuild-buildspec/

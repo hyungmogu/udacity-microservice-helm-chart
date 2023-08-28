@@ -1,0 +1,23 @@
+version: 0.2
+env:
+  secrets-manager:
+    AWS_DEFAULT_REGION: "my_secret:AWS_DEFAULT_REGION"
+    AWS_ACCOUNT_ID: "my_secret:AWS_ACCOUNT_ID"
+    IMAGE_REPO_NAME: "my_secret:IMAGE_REPO_NAME"
+    IMAGE_TAG: "my_secret:IMAGE_TAG"
+phases:
+  pre_build:
+    commands:
+      - echo Logging into ECR
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+  build:
+    commands:
+      - echo Starting build at `date`
+      - echo Building the Docker image...
+      - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG .
+      - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG      
+  post_build:
+    commands:
+      - echo Completed build at `date`
+      - echo Pushing the Docker image...
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
