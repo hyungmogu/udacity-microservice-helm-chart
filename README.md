@@ -126,3 +126,4 @@ The benefit here is that it's explicitly set. However, note that the `DB_PASSWOR
 ## References
 
 1. Emre Yilmaz. 3 Ways for Environment Variables in AWS CodeBuild Buildspecs. Shikisoft. https://blog.shikisoft.com/define-environment-vars-aws-codebuild-buildspec/
+2. Cloud Quick Labs. Kubernetes Application Deployment from AWS ECR to EKS. Youtube. https://www.youtube.com/watch?v=Y4kNINPe9ho
