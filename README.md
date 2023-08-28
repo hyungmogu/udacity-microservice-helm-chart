@@ -127,3 +127,5 @@ The benefit here is that it's explicitly set. However, note that the `DB_PASSWOR
 
 1. Emre Yilmaz. 3 Ways for Environment Variables in AWS CodeBuild Buildspecs. Shikisoft. https://blog.shikisoft.com/define-environment-vars-aws-codebuild-buildspec/
 2. Cloud Quick Labs. Kubernetes Application Deployment from AWS ECR to EKS. Youtube. https://www.youtube.com/watch?v=Y4kNINPe9ho
+3. Vladislav. Docker ARG, ENV and .env - a Complete Guide. vsupalov. https://vsupalov.com/docker-arg-env-variable-guide/
+4. joar. How to install psycopg2 with "pip" on Python?. Stack Overflow. https://stackoverflow.com/questions/5420789/how-to-install-psycopg2-with-pip-on-python#answer-5450183
