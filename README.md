@@ -75,7 +75,7 @@ helm repo add <REPO_NAME> https://charts.bitnami.com/bitnami
 
 2. Install PostgreSQL Helm Chart
 ```
-helm install <SERVICE_NAME> <REPO_NAME>/postgresql
+helm install --set primary.persistence.enabled=false <SERVICE_NAME> <REPO_NAME>/postgresql
 ```
 
 This should set up a Postgre deployment at `<SERVICE_NAME>-postgresql.default.svc.cluster.local` in your Kubernetes cluster. You can verify it by running `kubectl svc`
@@ -172,3 +172,4 @@ The benefit here is that it's explicitly set. However, note that the `DB_PASSWOR
 5. terpez. Daemon error responses: exec format error and Container is restarting, wait until the container is running. Docker Community Forum. https://forums.docker.com/t/daemon-error-responses-exec-format-error-and-container-is-restarting-wait-until-the-container-is-running/110385/2
 6. Justin Lee. Demo: Creating an EKS Cluster. Udacity. https://learn.udacity.com/paid-courses/cd12355/lessons/8baf6c23-4fd5-481e-97ef-258d8f1f4556/concepts/64e226da-b22e-4be1-bb10-1bf614e0ef48
 7. EKSCTL Team. ARM Support. EKSCTL. https://eksctl.io/usage/arm-support/
+8. Viet N, leokury. EBS-CSI can't provision persistent volume for the postgresql pod. Udacity Knowledge. https://knowledge.udacity.com/questions/994218
