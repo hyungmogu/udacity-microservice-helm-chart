@@ -1,10 +1,10 @@
 version: 0.2
 env:
   secrets-manager:
-    AWS_DEFAULT_REGION: "my_secret:AWS_DEFAULT_REGION"
-    AWS_ACCOUNT_ID: "my_secret:AWS_ACCOUNT_ID"
-    IMAGE_REPO_NAME: "my_secret:IMAGE_REPO_NAME"
-    IMAGE_TAG: "my_secret:IMAGE_TAG"
+    AWS_DEFAULT_REGION: udacity-kubernetes-cluster-demo-NLSzCg:AWS_DEFAULT_REGION
+    AWS_ACCOUNT_ID: udacity-kubernetes-cluster-demo-NLSzCg:AWS_ACCOUNT_ID
+    IMAGE_REPO_NAME: udacity-kubernetes-cluster-demo-NLSzCg:IMAGE_REPO_NAME
+    IMAGE_TAG: udacity-kubernetes-cluster-demo-NLSzCg:IMAGE_TAG
 phases:
   pre_build:
     commands:
