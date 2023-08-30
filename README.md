@@ -174,6 +174,7 @@ The benefit here is that it's explicitly set. However, note that the `DB_PASSWOR
 7. EKSCTL Team. ARM Support. EKSCTL. https://eksctl.io/usage/arm-support/
 8. Viet N, leokury. EBS-CSI can't provision persistent volume for the postgresql pod. Udacity Knowledge. https://knowledge.udacity.com/questions/994218
 9. Ajay Kulkarni. How to Install psql on Mac, Ubuntu, Debian, Windows. Timescale. https://www.timescale.com/blog/how-to-install-psql-on-mac-ubuntu-debian-windows/
-10. Ohmen. Pod don't run, insufficient resources. Stack Overflow. https://stackoverflow.com/questions/53192999/pod-dont-run-insufficient-resources
+10. Ohmen. Pod don't run, insufficient resources. Stack Overflow. https://stackoverflow.com/questions/53192999/pod-dont-run-insufficient-resources#answer-53195147
 11. Kubernetes Team. Reserve Compute Resources for System Daemons. Kubernetes. https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/
 12. quoc9x. Kubernetes cannot be handled as a Secret illegal base64 data when using environment variable. Stack Overflow. https://stackoverflow.com/questions/73680884/kubernetes-cannot-be-handled-as-a-secret-illegal-base64-data-when-using-environm#answer-73681375
+13. davidism. Flask-SQLAlchemy db.create_all() raises RuntimeError working outside of application context. Stack Overflow. https://stackoverflow.com/questions/73961938/flask-sqlalchemy-db-create-all-raises-runtimeerror-working-outside-of-applicat#answer-73962250

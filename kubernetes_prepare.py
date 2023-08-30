@@ -7,7 +7,7 @@ class KubernetesSetupTool:
     def prepare_manifest(self):
         base_paths = [os.path.join("./.kubernetes", folder) for folder in os.listdir("./.kubernetes") if "_src" not in folder]
         env_variables = {
-            "DB_PASSWORD": os.environ.get("KUBERNETES_POSTGRES_PASSWORD", ""),
+            "POSTGRES_PASSWORD": os.environ.get("POSTGRES_PASSWORD", "")
         }
 
         # Create folder ".circleci/kubernetes/base_src" if it doesn't exist

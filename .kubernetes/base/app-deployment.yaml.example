@@ -45,11 +45,14 @@ spec:
                   name: db-secret
                   key: DB_PASSWORD
             - name: DB_HOST
-              value: postgres-service
+              valueFrom:
+                configMapKeyRef:
+                  name: db-env
+                  key: DB_HOST
           resources:
             requests:
               cpu: 200m
-              memory: "200Mi"
+              memory: "500Mi"
             limits:
               cpu: 500m
-              memory: "400Mi"
+              memory: "700Mi"
