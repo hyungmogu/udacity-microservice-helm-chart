@@ -101,7 +101,7 @@ kubectl port-forward --namespace default svc/<SERVICE_NAME>-postgresql 5432:5432
 * Connecting Via a Pod
 ```bash
 kubectl exec -it <POD_NAME> bash
-PGPASSWORD="<PASSWORD HERE>" psql postgres://postgres@<SERVICE_NAME>:5432/postgres -c <COMMAND_HERE>
+PGPASSWORD="$POSTGRES_PASSWORD" psql postgres://postgres@<SERVICE_NAME>:5432/postgres -c <COMMAND_HERE>
 ```
 
 4. Run Seed Files
@@ -173,3 +173,7 @@ The benefit here is that it's explicitly set. However, note that the `DB_PASSWOR
 6. Justin Lee. Demo: Creating an EKS Cluster. Udacity. https://learn.udacity.com/paid-courses/cd12355/lessons/8baf6c23-4fd5-481e-97ef-258d8f1f4556/concepts/64e226da-b22e-4be1-bb10-1bf614e0ef48
 7. EKSCTL Team. ARM Support. EKSCTL. https://eksctl.io/usage/arm-support/
 8. Viet N, leokury. EBS-CSI can't provision persistent volume for the postgresql pod. Udacity Knowledge. https://knowledge.udacity.com/questions/994218
+9. Ajay Kulkarni. How to Install psql on Mac, Ubuntu, Debian, Windows. Timescale. https://www.timescale.com/blog/how-to-install-psql-on-mac-ubuntu-debian-windows/
+10. Ohmen. Pod don't run, insufficient resources. Stack Overflow. https://stackoverflow.com/questions/53192999/pod-dont-run-insufficient-resources
+11. Kubernetes Team. Reserve Compute Resources for System Daemons. Kubernetes. https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/
+12. quoc9x. Kubernetes cannot be handled as a Secret illegal base64 data when using environment variable. Stack Overflow. https://stackoverflow.com/questions/73680884/kubernetes-cannot-be-handled-as-a-secret-illegal-base64-data-when-using-environm#answer-73681375
