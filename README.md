@@ -2,12 +2,6 @@
 
 This project is done to better understand how kubernetes application manager `helm chart` works, and learn how to use it for [udacity-cloud-devops-project-5](https://github.com/hyungmogu/udacity-cloud-devops-project-5) github repository . There are a lot of parts like provisioning redis or postgresql where I feel more learning is required. I have implemented my solutions but I have questions if there are easier, or simpler approach. I hope that by the end of this project, I learn how to use helm and related tools that the work of provisioning my kubernetes cluster becomes easier.
 
-## Description
-
-The Coworking Space Service is a set of APIs that enables users to request one-time tokens and administrators to authorize access to a coworking space. This service follows a microservice pattern and the APIs are split into distinct services that can be deployed and managed independently of one another.
-
-For this project, you are a DevOps engineer who will be collaborating with a team that is building an API for business analysts. The API provides business analysts basic analytics data on user activity in the service. The application they provide you functions as expected locally and you are expected to help build a pipeline to deploy it in Kubernetes.
-
 ## Getting Started
 
 ### Dependencies
@@ -17,6 +11,7 @@ For this project, you are a DevOps engineer who will be collaborating with a tea
 3. `kubectl` - run commands against a Kubernetes cluster
 4. `helm` - apply Helm Charts to a Kubernetes cluster
 5. `AWS CLI` - For uploading image to Amazon ECR and provisoning Amazon Kubernetes Cluster using EKSCTL
+6. `psql` - For seeding and uploading data to Kubernetes PostgreSQL database.
 
 #### Remote Resources
 1. AWS CodeBuild - build Docker images remotely
@@ -28,7 +23,7 @@ For this project, you are a DevOps engineer who will be collaborating with a tea
 ### Setup
 #### 1. Provisioning EKS Cluster
 
-1. Setup AWS Credentials
+1. Setup AWS Credentials. The required access keys can be found by following steps [here](https://docs.aws.amazon.com/powershell/latest/userguide/pstools-appendix-sign-up.html)
 
 ```
 aws configure
@@ -50,100 +45,37 @@ If correct, it should give output in the following:
 }
 ```
 
-3. Make sure IAM Node Group role is generated via instructions [here](https://docs.aws.amazon.com/eks/latest/userguide/create-node-role.html#create-worker-node-role)
+3. Make sure IAM Node Group role with the name of `udacity-eks-node` is created via instructions [here](https://docs.aws.amazon.com/eks/latest/userguide/create-node-role.html#create-worker-node-role)
 
-4. Provision Kubernetes Cluster using EKSCTL
+4. Type below to make the magic work.
 
 ```
-eksctl create cluster \
-            --name udacity-kubernetes-cluster-demo-arm \
-            --region us-east-1 \
-            --nodegroup-name <NODE_GROUP_ROLE_NAME> \
-            --node-type t4g.micro \
-            --nodes 2 \
-            --nodes-min 1 \
-            --nodes-max 2
+make start
 ```
 
-#### 2. Configure a Database
-Set up a Postgres database using a Helm Chart.
+**NOTE:** Always remove amazon parts when done. Otherwise, cost is going to build up.
 
-1. Set up Bitnami Repo
-```bash
-helm repo add <REPO_NAME> https://charts.bitnami.com/bitnami
-```
+## How Deployment Process Works (Solution to Project Instructions #7)
 
-2. Install PostgreSQL Helm Chart
-```
-helm install --set primary.persistence.enabled=false <SERVICE_NAME> <REPO_NAME>/postgresql
-```
+The deployment process for this project involve Amazon Codebuild, git commandline tool, github, docker and Amazon ECR. Once files are pushed to github, AWS codebuild starts building. Contents in `./analytics` folder are packaged into a docker image, and then it is pushed to AWS ECR via Docker CLI. It's a complex process that involve lots of mechanics.
 
-This should set up a Postgre deployment at `<SERVICE_NAME>-postgresql.default.svc.cluster.local` in your Kubernetes cluster. You can verify it by running `kubectl svc`
+To get started, please create AWS Codebuild project with the name of `udacity-kubernetes-cluster-demo` [here] (https://us-east-1.console.aws.amazon.com/codesuite/codebuild/projects?region=us-east-1). The settings I've used for my Codebuild project is:
 
-By default, it will create a username `postgres`. The password can be retrieved with the following command:
-```bash
-export POSTGRES_PASSWORD=$(kubectl get secret --namespace default <SERVICE_NAME>-postgresql -o jsonpath="{.data.postgres-password}" | base64 -d)
+<img src="https://github.com/hyungmogu/udacity-cloud-devops-project-5/assets/6856382/a5def686-c0de-476d-86a2-cf8d55762afb"/>
 
-echo $POSTGRES_PASSWORD
-```
+Once this is done, a build will trigger when a commit is made to github repository.
 
-<sup><sub>* The instructions are adapted from [Bitnami's PostgreSQL Helm Chart](https://artifacthub.io/packages/helm/bitnami/postgresql).</sub></sup>
+The values of the environemnt variables in `buildspec.yaml` need to be updated for AWS Codebuild to work. This is because the AWS EKS cluster information is going to be different from what I have. The values of the environment variables is going to be available after following the step `1. Provisioning EKS Cluster`. Once the Kubernetes cluster is generated, the values of the environment vairables can be found [here](https://us-east-1.console.aws.amazon.com/ecr/repositories?region=us-east-1).
 
-3. Test Database Connection
-The database is accessible within the cluster. This means that when you will have some issues connecting to it via your local environment. You can either connect to a pod that has access to the cluster _or_ connect remotely via [`Port Forwarding`](https://kubernetes.io/docs/tasks/access-application-cluster/port-forward-access-application-cluster/)
+<img src="https://github.com/hyungmogu/udacity-cloud-devops-project-5/assets/6856382/2be076fb-75c4-460b-90ab-c7803428e7c9">
 
-* Connecting Via Port Forwarding
-```bash
-kubectl port-forward --namespace default svc/<SERVICE_NAME>-postgresql 5432:5432 &
-    PGPASSWORD="$POSTGRES_PASSWORD" psql --host 127.0.0.1 -U postgres -d postgres -p 5432
-```
+One thing to note. Codebuild requires the attachment of `AmazonEC2ContainerRegistryFullAccess` policy to it's IAM role. This is required for docker login and successful deployment of Docker image to Amazon ECR. The reason is Amazon Codebuild abides by the Principle of Least Privilege. The Principle of Least Privilege means a user is given no more privilege than necessary to perform his/her job function. In sum, this policy is needed to grant permission to pull ECR login data, and have ECR accept the incoming Docker image. It's a small work to endure to make this cool feature to work.
 
-* Connecting Via a Pod
-```bash
-kubectl exec -it <POD_NAME> bash
-PGPASSWORD="$POSTGRES_PASSWORD" psql postgres://postgres@<SERVICE_NAME>:5432/postgres -c <COMMAND_HERE>
-```
+In order to attach `AmazonEC2ContainerRegistryFullAccess`policy, please look for self generated IAM role with the name of `codebuild-<codebuild_name>-service-role` [here](https://us-east-1.console.aws.amazon.com/iamv2/home?region=us-east-1#/roles).
 
-4. Run Seed Files
-We will need to run the seed files in `db/` in order to create the tables and populate them with data.
+<img src="https://github.com/hyungmogu/udacity-cloud-devops-project-5/assets/6856382/30044ee1-c58d-4224-9364-4040d590c290"/>
 
-```bash
-kubectl port-forward --namespace default svc/<SERVICE_NAME>-postgresql 5432:5432 &
-    PGPASSWORD="$POSTGRES_PASSWORD" psql --host 127.0.0.1 -U postgres -d postgres -p 5432 < <FILE_NAME.sql>
-```
-
-### 3. Running the Analytics Application Locally
-In the `analytics/` directory:
-
-1. Install dependencies
-```bash
-pip install -r requirements.txt
-```
-2. Run the application (see below regarding environment variables)
-```bash
-<ENV_VARS> python app.py
-```
-
-There are multiple ways to set environment variables in a command. They can be set per session by running `export KEY=VAL` in the command line or they can be prepended into your command.
-
-* `DB_USERNAME`
-* `DB_PASSWORD`
-* `DB_HOST` (defaults to `127.0.0.1`)
-* `DB_PORT` (defaults to `5432`)
-* `DB_NAME` (defaults to `postgres`)
-
-If we set the environment variables by prepending them, it would look like the following:
-```bash
-DB_USERNAME=username_here DB_PASSWORD=password_here python app.py
-```
-The benefit here is that it's explicitly set. However, note that the `DB_PASSWORD` value is now recorded in the session's history in plaintext. There are several ways to work around this including setting environment variables in a file and sourcing them in a terminal session.
-
-3. Verifying The Application
-* Generate report for check-ins grouped by dates
-`curl <BASE_URL>/api/reports/daily_usage`
-
-* Generate report for check-ins grouped by users
-`curl <BASE_URL>/api/reports/user_visits`
+<img src="https://github.com/hyungmogu/udacity-cloud-devops-project-5/assets/6856382/6ae7cd17-57a9-404d-a7c0-a1b07dae92d7"/>
 
 ## Project Instructions
 1. Set up a Postgres database with a Helm Chart.
@@ -161,7 +93,6 @@ The benefit here is that it's explicitly set. However, note that the `DB_PASSWOR
 6. Check AWS CloudWatch for application logs.
     - a. Take a screenshot of AWS CloudWatch logs for the application.
 7. Create a README.md file in your solution that serves as documentation for your user to detail how your deployment process works and how the user can deploy changes. The details should not simply rehash what you have done on a step by step basis. Instead, it should help an experienced software developer understand the technologies and tools in the build and deploy process as well as provide them insight into how they would release new builds.
-
 
 ## References
 
