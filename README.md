@@ -180,3 +180,4 @@ The benefit here is that it's explicitly set. However, note that the `DB_PASSWOR
 13. davidism. Flask-SQLAlchemy db.create_all() raises RuntimeError working outside of application context. Stack Overflow. https://stackoverflow.com/questions/73961938/flask-sqlalchemy-db-create-all-raises-runtimeerror-working-outside-of-applicat#answer-73962250
 14. Ingress Nginx Controller Team. Rewrite. Ingress Nginx Controller. https://kubernetes.github.io/ingress-nginx/examples/rewrite/
 15. not Michal. How to handle secrets in AWS Codebuild. Medium. https://mpasierbski.medium.com/how-to-handle-secrets-in-aws-codebuild-6e1b96013712
+16. Jimmy. AWS CodeBuild GetAuthorizationToken failed. Stack Overflow. https://stackoverflow.com/questions/43033559/aws-codebuild-getauthorizationtoken-failed#answer-52264228
