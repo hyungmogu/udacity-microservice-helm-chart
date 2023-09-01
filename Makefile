@@ -1,28 +1,32 @@
+REPO_NAME=udacity-kubernetes-cluster-demo/server
+EKS_CLUSTER_NAME=udacity-kubernetes-cluster-demo-arm-2
+EKS_NODEGROUP_NAME=udacity-eks-node
+
 aws_configure:
 	aws configure
 eks_create:
 	eksctl create cluster \
-            --name udacity-kubernetes-cluster-demo-arm \
+            --name ${EKS_CLUSTER_NAME} \
             --region us-east-1 \
-            --nodegroup-name udacity-eks-node \
+            --nodegroup-name ${EKS_NODEGROUP_NAME} \
             --node-type t4g.small \
             --nodes 2 \
             --nodes-min 1 \
             --nodes-max 2
 eks_delete:
-	eksctl delete cluster --name udacity-kubernetes-cluster-demo-arm
+	eksctl delete cluster --name ${EKS_CLUSTER_NAME}
 kubernetes_initialize:
-	aws eks --region us-east-1 update-kubeconfig --name udacity-demo-eks-cluster-arm
+	aws eks --region us-east-1 update-kubeconfig --name ${EKS_CLUSTER_NAME}
 ecr_create:
-	aws ecr create-repository --repository-name udacity-kubernetes-cluster-demo/server
+	sh ./.bin/ecr_create.sh $(REPO_NAME)
 ecr_login:
-	ECR_REGISTRY_ID=$$(aws ecr describe-repositories --repository-names "udacity-kubernetes-cluster-demo/server" | jq -r ".repositories[0].registryId") &&\
+	ECR_REGISTRY_ID=$$(aws ecr describe-repositories --repository-names "${REPO_NAME}" | jq -r ".repositories[0].registryId") &&\
 	aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin "$$ECR_REGISTRY_ID.dkr.ecr.us-east-1.amazonaws.com"
 ecr_deploy: ecr_login
-	ECR_REGISTRY_ID=$$(aws ecr describe-repositories --repository-names "udacity-kubernetes-cluster-demo/server" | jq -r ".repositories[0].registryId") &&\
-	docker build -t udacity-kubernetes-cluster-demo/server analytics/. &&\
-	docker tag udacity-kubernetes-cluster-demo/server:latest $$ECR_REGISTRY_ID.dkr.ecr.us-east-1.amazonaws.com/udacity-kubernetes-cluster-demo/server:latest &&\
-	docker push "$$ECR_REGISTRY_ID.dkr.ecr.us-east-1.amazonaws.com/udacity-kubernetes-cluster-demo/server:latest"
+	ECR_REGISTRY_ID=$$(aws ecr describe-repositories --repository-names "${REPO_NAME}" | jq -r ".repositories[0].registryId") &&\
+	docker build -t ${REPO_NAME} analytics/. &&\
+	docker tag ${REPO_NAME}:latest $$ECR_REGISTRY_ID.dkr.ecr.us-east-1.amazonaws.com/${REPO_NAME}:latest &&\
+	docker push "$$ECR_REGISTRY_ID.dkr.ecr.us-east-1.amazonaws.com/${REPO_NAME}:latest"
 postgres_install:
 	helm repo add bitnami https://charts.bitnami.com/bitnami &&\
 	helm install --set primary.persistence.enabled=false postgres bitnami/postgresql
