@@ -5,7 +5,7 @@ load_dotenv(find_dotenv())
 
 class KubernetesSetupTool:
     def prepare_manifest(self):
-        base_paths = [os.path.join("./.kubernetes", folder) for folder in os.listdir("./.kubernetes") if "_src" not in folder]
+        base_paths = [os.path.join("./deployment", folder) for folder in os.listdir("./deployment") if "_src" not in folder]
         env_variables = {
             "POSTGRES_PASSWORD": os.environ.get("POSTGRES_PASSWORD", "")
         }
