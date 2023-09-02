@@ -6,7 +6,7 @@ This project is done to better understand how kubernetes application manager `he
 
 ### Dependencies
 #### Local Environment
-1. Python Environment - run Python 3.6+ applications and install Python dependencies via `pip`
+1. Python Environment - run Python 3.8+ applications and install Python dependencies via `pip`
 2. Docker CLI - build and run Docker images locally
 3. `kubectl` - run commands against a Kubernetes cluster
 4. `helm` - apply Helm Charts to a Kubernetes cluster
@@ -23,7 +23,7 @@ This project is done to better understand how kubernetes application manager `he
 ### Setup
 #### 1. Provisioning EKS Cluster
 
-1. Setup AWS Credentials. The required access keys can be found by following steps [here](https://docs.aws.amazon.com/powershell/latest/userguide/pstools-appendix-sign-up.html)
+1. Setup AWS Credentials. The access keys can be gained by following the steps [here](https://docs.aws.amazon.com/powershell/latest/userguide/pstools-appendix-sign-up.html)
 
 ```
 aws configure
@@ -45,7 +45,7 @@ If correct, it should give output in the following:
 }
 ```
 
-3. Make sure IAM Node Group role with the name of `udacity-eks-node` is created via instructions [here](https://docs.aws.amazon.com/eks/latest/userguide/create-node-role.html#create-worker-node-role)
+3. Make sure IAM Node Group role with the name of `udacity-eks-node` is created following instructions [here](https://docs.aws.amazon.com/eks/latest/userguide/create-node-role.html#create-worker-node-role)
 
 4. Type below to make the magic work.
 
@@ -53,7 +53,19 @@ If correct, it should give output in the following:
 make start
 ```
 
-**NOTE:** Always remove amazon parts when done. Otherwise, cost is going to build up.
+5. If `make start` gets stuck at `Waiting for Kubectl 5432 to become available...`, then please open up a new terminal (IMPORTANT: without closing the current terminal), and type in the following command
+
+```
+kubectl port-forward --namespace default svc/postgres-postgresql 5432:5432
+```
+
+This can be closed once the migration is complete.
+
+**NOTE:** Always remove amazon parts when done. Otherwise, cost is going to build up. The command I use to remove the EKS cluster is
+
+```
+make eks_delete
+```
 
 ## How Deployment Process Works (Solution to Project Instructions #7)
 
@@ -112,3 +124,5 @@ In order to attach `AmazonEC2ContainerRegistryFullAccess`policy, please look for
 14. Ingress Nginx Controller Team. Rewrite. Ingress Nginx Controller. https://kubernetes.github.io/ingress-nginx/examples/rewrite/
 15. not Michal. How to handle secrets in AWS Codebuild. Medium. https://mpasierbski.medium.com/how-to-handle-secrets-in-aws-codebuild-6e1b96013712
 16. Jimmy. AWS CodeBuild GetAuthorizationToken failed. Stack Overflow. https://stackoverflow.com/questions/43033559/aws-codebuild-getauthorizationtoken-failed#answer-52264228
+17. Peter V.Merch. Kubectl port forward reliably in a shell script. Stack Overflow.https://stackoverflow.com/questions/67415637/kubectl-port-forward-reliably-in-a-shell-script
+18. Shane Bishop, FDS. How to check if a process id (PID) exists. Stack Overflow.
